@@ -27,6 +27,7 @@ func AddPlayer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if playerRequest.Nickname == "" || playerRequest.Life == 0 || playerRequest.Attack == 0 {
+		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(PlayerResponse{Message: "Player nickname, life and attack is required"})
 		return
 	}
