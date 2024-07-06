@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
 )
 
@@ -149,6 +150,148 @@ func SavePlayer(w http.ResponseWriter, r *http.Request) {
 
 var players []PlayerRequest
 
+type EnemyRequest struct {
+	Nickname string
+	Life     int
+	Attack   int
+}
+
+type EnemyResponse struct {
+	Message string `json:"message"`
+}
+
+func AddEnemy(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var enemyRequest EnemyRequest
+	if err := json.NewDecoder(r.Body).Decode(&enemyRequest); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(EnemyResponse{Message: "Internal Server Error"})
+		return
+	}
+
+	if enemyRequest.Nickname == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(EnemyResponse{Message: "Enemy nickname is required"})
+		return
+	}
+
+	enemyRequest.Life = rand.Intn(10)
+	enemyRequest.Attack = rand.Intn(10)
+
+	if enemyRequest.Life == 0 {
+		enemyRequest.Life += 1
+	}
+
+	if enemyRequest.Attack == 0 {
+		enemyRequest.Attack += 1
+	}
+
+	for _, enemy := range enemies {
+		if enemy.Nickname == enemyRequest.Nickname {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(EnemyResponse{Message: "Enemy nickname already exits"})
+			return
+		}
+	}
+
+	enemy := EnemyRequest{
+		Nickname: enemyRequest.Nickname,
+		Life:     enemyRequest.Life,
+		Attack:   enemyRequest.Attack}
+	enemies = append(enemies, enemy)
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(enemy)
+}
+
+func LoadEnemies(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(enemies)
+}
+
+func DeleteEnemy(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	nickname := r.PathValue("nickname")
+
+	for i, enemy := range enemies {
+		if enemy.Nickname == nickname {
+			enemies = append(enemies[:i], enemies[i+1:]...)
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+	}
+
+	w.WriteHeader(http.StatusNotFound)
+	json.NewEncoder(w).Encode(EnemyResponse{
+		Message: "Enemy nickname not found",
+	})
+}
+
+func LoadEnemyByNickname(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	nickname := r.PathValue("nickname")
+
+	for _, enemy := range enemies {
+		if enemy.Nickname == nickname {
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(enemy)
+			return
+		}
+	}
+
+	w.WriteHeader(http.StatusNotFound)
+	json.NewEncoder(w).Encode(EnemyResponse{
+		Message: "Enemy nickname not found",
+	})
+}
+
+func SaveEnemy(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	nickname := r.PathValue("nickname")
+
+	var enemyRequest EnemyRequest
+	if err := json.NewDecoder(r.Body).Decode(&enemyRequest); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(EnemyResponse{Message: "Internal Server Error"})
+		return
+	}
+
+	if enemyRequest.Nickname == "" {
+		json.NewEncoder(w).Encode(EnemyResponse{Message: "Enemy nickname is required"})
+		return
+	}
+
+	indexEnemy := -1
+	for i, enemy := range enemies {
+		if enemy.Nickname == nickname {
+			indexEnemy = i
+		}
+		if enemy.Nickname == enemyRequest.Nickname {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(EnemyResponse{Message: "Enemy nickname already exits"})
+			return
+		}
+	}
+
+	if indexEnemy != -1 {
+		enemies[indexEnemy].Nickname = enemyRequest.Nickname
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(enemies[indexEnemy])
+		return
+	}
+
+	w.WriteHeader(http.StatusBadRequest)
+	json.NewEncoder(w).Encode(EnemyResponse{
+		Message: "Enemy nickname not found",
+	})
+}
+
+var enemies []EnemyRequest
+
 func main() {
 	mux := http.NewServeMux()
 
@@ -157,6 +300,12 @@ func main() {
 	mux.HandleFunc("DELETE /player/{nickname}", DeletePlayer)
 	mux.HandleFunc("GET /player/{nickname}", LoadPlayerByNickname)
 	mux.HandleFunc("PUT /player/{nickname}", SavePlayer)
+
+	mux.HandleFunc("POST /enemy", AddEnemy)
+	mux.HandleFunc("GET /enemy", LoadEnemies)
+	mux.HandleFunc("DELETE /enemy/{nickname}", DeleteEnemy)
+	mux.HandleFunc("GET /enemy/{nickname}", LoadEnemyByNickname)
+	mux.HandleFunc("PUT /enemy/{nickname}", SaveEnemy)
 
 	fmt.Println("Server is running on port 8080")
 	err := http.ListenAndServe(":8080", mux)
