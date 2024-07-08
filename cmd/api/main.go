@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+
+	"github.com/google/uuid"
 )
 
 type PlayerRequest struct {
@@ -292,6 +294,114 @@ func SaveEnemy(w http.ResponseWriter, r *http.Request) {
 
 var enemies []EnemyRequest
 
+type BattleRequest struct {
+	ID         string
+	Enemy      string
+	Player     string
+	DiceThrown int
+}
+
+type BattleResponse struct {
+	Message string `json:"message"`
+}
+
+func AddBattle(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var battleRequest BattleRequest
+	if err := json.NewDecoder(r.Body).Decode(&battleRequest); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(BattleResponse{Message: "Internal Server Error"})
+		return
+	}
+
+	if battleRequest.Player == "" || battleRequest.Enemy == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(BattleResponse{Message: "Player and enemy nicknames are required"})
+		return
+	}
+
+	// check if player exists
+	var playerRequest PlayerRequest
+	playerIndex := -1
+
+	for index, player := range players {
+		if player.Nickname == battleRequest.Player {
+			playerRequest = player
+			playerIndex = index
+		}
+	}
+
+	if playerRequest.Nickname == "" || playerIndex == -1 {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(BattleResponse{Message: "Player not found"})
+		return
+	}
+
+	// check if enemy exists
+	var enemyRequest EnemyRequest
+	enemyIndex := -1
+
+	for index, enemy := range enemies {
+		if enemy.Nickname == battleRequest.Enemy {
+			enemyRequest = enemy
+			enemyIndex = index
+		}
+	}
+
+	if enemyRequest.Nickname == "" || enemyIndex == -1 {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(BattleResponse{Message: "Enemy not found"})
+		return
+	}
+
+	// check if player and enemy life is lesser than or equal to 0
+	if playerRequest.Life <= 0 || enemyRequest.Life <= 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(BattleResponse{Message: "Player and enemy life must be greater than 0"})
+		return
+	}
+
+	// generate dicethrown
+	battleRequest.DiceThrown = rand.Intn(6)
+
+	if battleRequest.DiceThrown == 0 {
+		battleRequest.DiceThrown += 1
+	}
+
+	if battleRequest.DiceThrown == 1 || battleRequest.DiceThrown == 2 || battleRequest.DiceThrown == 3 {
+		// enemy wins and attacks player
+		playerRequest.Life -= enemyRequest.Attack
+		// save player's life
+		players[playerIndex].Life = playerRequest.Life
+	} else {
+		// player wins and attacks enemy
+		enemyRequest.Life -= playerRequest.Attack
+		// save enemy's life
+		enemies[enemyIndex].Life = enemyRequest.Life
+	}
+
+	battleRequest.ID = uuid.NewString()
+
+	battle := BattleRequest{
+		ID:         battleRequest.ID,
+		Enemy:      battleRequest.Enemy,
+		Player:     battleRequest.Player,
+		DiceThrown: battleRequest.DiceThrown}
+	battles = append(battles, battle)
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(battle)
+}
+
+func LoadBattles(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(battles)
+}
+
+var battles []BattleRequest
+
 func main() {
 	mux := http.NewServeMux()
 
@@ -306,6 +416,9 @@ func main() {
 	mux.HandleFunc("DELETE /enemy/{nickname}", DeleteEnemy)
 	mux.HandleFunc("GET /enemy/{nickname}", LoadEnemyByNickname)
 	mux.HandleFunc("PUT /enemy/{nickname}", SaveEnemy)
+
+	mux.HandleFunc("POST /battle", AddBattle)
+	mux.HandleFunc("GET /battle", LoadBattles)
 
 	fmt.Println("Server is running on port 8080")
 	err := http.ListenAndServe(":8080", mux)
