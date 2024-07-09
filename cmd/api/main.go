@@ -178,6 +178,14 @@ func AddEnemy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	for _, enemy := range enemies {
+		if enemy.Nickname == enemyRequest.Nickname {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(EnemyResponse{Message: "Enemy nickname already exits"})
+			return
+		}
+	}
+
 	enemyRequest.Life = rand.Intn(10)
 	enemyRequest.Attack = rand.Intn(10)
 
@@ -187,14 +195,6 @@ func AddEnemy(w http.ResponseWriter, r *http.Request) {
 
 	if enemyRequest.Attack == 0 {
 		enemyRequest.Attack += 1
-	}
-
-	for _, enemy := range enemies {
-		if enemy.Nickname == enemyRequest.Nickname {
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(EnemyResponse{Message: "Enemy nickname already exits"})
-			return
-		}
 	}
 
 	enemy := EnemyRequest{
