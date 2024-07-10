@@ -186,21 +186,10 @@ func AddEnemy(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	enemyRequest.Life = rand.Intn(10)
-	enemyRequest.Attack = rand.Intn(10)
-
-	if enemyRequest.Life == 0 {
-		enemyRequest.Life += 1
-	}
-
-	if enemyRequest.Attack == 0 {
-		enemyRequest.Attack += 1
-	}
-
 	enemy := EnemyRequest{
 		Nickname: enemyRequest.Nickname,
-		Life:     enemyRequest.Life,
-		Attack:   enemyRequest.Attack}
+		Life:     rand.Intn(10) + 1,
+		Attack:   rand.Intn(10) + 1}
 	enemies = append(enemies, enemy)
 
 	w.WriteHeader(http.StatusOK)
