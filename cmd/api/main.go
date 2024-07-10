@@ -311,63 +311,53 @@ func AddBattle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// check if player exists
-	var playerRequest PlayerRequest
 	playerIndex := -1
 
 	for index, player := range players {
 		if player.Nickname == battleRequest.Player {
-			playerRequest = player
 			playerIndex = index
 		}
 	}
 
-	if playerRequest.Nickname == "" || playerIndex == -1 {
+	if playerIndex == -1 {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(BattleResponse{Message: "Player not found"})
 		return
 	}
 
 	// check if enemy exists
-	var enemyRequest EnemyRequest
 	enemyIndex := -1
 
 	for index, enemy := range enemies {
 		if enemy.Nickname == battleRequest.Enemy {
-			enemyRequest = enemy
 			enemyIndex = index
 		}
 	}
 
-	if enemyRequest.Nickname == "" || enemyIndex == -1 {
+	if enemyIndex == -1 {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(BattleResponse{Message: "Enemy not found"})
 		return
 	}
 
 	// check if player and enemy life is lesser than or equal to 0
-	if playerRequest.Life <= 0 || enemyRequest.Life <= 0 {
+	if players[playerIndex].Life <= 0 || enemies[enemyIndex].Life <= 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(BattleResponse{Message: "Player and enemy life must be greater than 0"})
 		return
 	}
 
 	// generate dicethrown
-	battleRequest.DiceThrown = rand.Intn(6)
+	battleRequest.DiceThrown = rand.Intn(6) + 1
 
-	if battleRequest.DiceThrown == 0 {
-		battleRequest.DiceThrown += 1
+	if battleRequest.DiceThrown >= 1 && battleRequest.DiceThrown <= 3 {
+		// enemy wins, so subtract player life by enemy attack
+		players[playerIndex].Life -= enemies[enemyIndex].Attack
 	}
-
-	if battleRequest.DiceThrown == 1 || battleRequest.DiceThrown == 2 || battleRequest.DiceThrown == 3 {
-		// enemy wins and attacks player
-		playerRequest.Life -= enemyRequest.Attack
-		// save player's life
-		players[playerIndex].Life = playerRequest.Life
-	} else {
-		// player wins and attacks enemy
-		enemyRequest.Life -= playerRequest.Attack
-		// save enemy's life
-		enemies[enemyIndex].Life = enemyRequest.Life
+	
+	if battleRequest.DiceThrown >= 4 && battleRequest.DiceThrown <= 6 {
+		// player wins, so subtract enemy life by player attack
+		enemies[enemyIndex].Life -= players[playerIndex].Attack
 	}
 
 	battleRequest.ID = uuid.NewString()
