@@ -14,7 +14,7 @@ content-type: application/json
 
 ###
 
-DELETE http://localhost:8080/enemy/A HTTP/1.1
+DELETE http://localhost:8080/enemy/b03fa00f-9aab-4995-b165-816697ef4ba8 HTTP/1.1
 content-type: application/json
 
 {
@@ -22,7 +22,7 @@ content-type: application/json
 
 ###
 
-GET http://localhost:8080/enemy/A HTTP/1.1
+GET http://localhost:8080/enemy/89008e13-6882-4de7-84cc-1f720f7a6900 HTTP/1.1
 content-type: application/json
 
 {
@@ -30,9 +30,9 @@ content-type: application/json
 
 ###
 
-PUT http://localhost:8080/enemy/A HTTP/1.1
+PUT http://localhost:8080/enemy/89008e13-6882-4de7-84cc-1f720f7a6900 HTTP/1.1
 content-type: application/json
 
 {
-    "nickname": "B"
+    "nickname": "K"
 }

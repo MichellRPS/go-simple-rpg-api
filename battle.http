@@ -2,28 +2,12 @@ POST http://localhost:8080/battle HTTP/1.1
 content-type: application/json
 
 {
-    "Enemy": "A",
-    "Player": "TheClip"
+    "EnemyID":  "8c7891c9-0c57-432c-9bd3-8116668bcf5c",
+    "PlayerID": "2116faf6-6da5-461b-a3db-c83263422e11"
 }
 
 ###
 GET http://localhost:8080/battle HTTP/1.1
-content-type: application/json
-
-{
-}
-
-###
-
-GET http://localhost:8080/enemy/A HTTP/1.1
-content-type: application/json
-
-{
-}
-
-###
-
-GET http://localhost:8080/player/TheClip HTTP/1.1
 content-type: application/json
 
 {

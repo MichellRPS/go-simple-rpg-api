@@ -2,7 +2,7 @@ POST http://localhost:8080/player HTTP/1.1
 content-type: application/json
 
 {
-    "nickname": "TheClip",
+    "nickname": "TheClipBR",
     "life": 10,
     "attack": 2
 }
@@ -16,7 +16,7 @@ content-type: application/json
 
 ###
 
-DELETE http://localhost:8080/player/TheClip HTTP/1.1
+DELETE http://localhost:8080/player/e5396edb-5f20-4e90-8688-a12f63a8c895 HTTP/1.1
 content-type: application/json
 
 {
@@ -24,7 +24,7 @@ content-type: application/json
 
 ###
 
-GET http://localhost:8080/player/TheClip HTTP/1.1
+GET http://localhost:8080/player/2116faf6-6da5-461b-a3db-c83263422e11 HTTP/1.1
 content-type: application/json
 
 {
@@ -32,9 +32,11 @@ content-type: application/json
 
 ###
 
-PUT http://localhost:8080/player/TheClip HTTP/1.1
+PUT http://localhost:8080/player/2116faf6-6da5-461b-a3db-c83263422e11 HTTP/1.1
 content-type: application/json
 
 {
-    "nickname": "TheClipBR"
+    "nickname": "TheClipBR",
+    "attack": 1,
+    "life": 1
 }
