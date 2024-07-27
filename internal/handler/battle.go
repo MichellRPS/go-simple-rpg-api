@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Uemerson/go-simple-rpg-api/internal/entity"
-	"github.com/Uemerson/go-simple-rpg-api/internal/service"
+	"github.com/MichellRPS/go-simple-rpg-api/internal/entity"
+	"github.com/MichellRPS/go-simple-rpg-api/internal/service"
 )
 
 type BattleHandler struct {

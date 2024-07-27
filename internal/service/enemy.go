@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Uemerson/go-simple-rpg-api/internal/entity"
-	repository "github.com/Uemerson/go-simple-rpg-api/internal/repositoy"
+	"github.com/MichellRPS/go-simple-rpg-api/internal/entity"
+	repository "github.com/MichellRPS/go-simple-rpg-api/internal/repositoy"
 )
 
 type EnemyService struct {

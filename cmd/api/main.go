@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Uemerson/go-simple-rpg-api/internal/handler"
-	repository "github.com/Uemerson/go-simple-rpg-api/internal/repositoy"
-	"github.com/Uemerson/go-simple-rpg-api/internal/service"
+	"github.com/MichellRPS/go-simple-rpg-api/internal/handler"
+	repository "github.com/MichellRPS/go-simple-rpg-api/internal/repositoy"
+	"github.com/MichellRPS/go-simple-rpg-api/internal/service"
 	_ "github.com/lib/pq"
 )
 
