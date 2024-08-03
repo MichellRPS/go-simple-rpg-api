@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/MichellRPS/go-simple-rpg-api/internal/handler"
-	repository "github.com/MichellRPS/go-simple-rpg-api/internal/repositoy"
+	repository "github.com/MichellRPS/go-simple-rpg-api/internal/repository"
 	"github.com/MichellRPS/go-simple-rpg-api/internal/service"
 	_ "github.com/lib/pq"
 )

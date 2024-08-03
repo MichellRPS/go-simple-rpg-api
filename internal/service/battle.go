@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/MichellRPS/go-simple-rpg-api/internal/entity"
-	repository "github.com/MichellRPS/go-simple-rpg-api/internal/repositoy"
+	repository "github.com/MichellRPS/go-simple-rpg-api/internal/repository"
 )
 
 type BattleService struct {
