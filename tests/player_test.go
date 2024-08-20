@@ -38,7 +38,7 @@ func TestPlayerHandler(t *testing.T) {
 
 	// Test add player
 
-	jsonBody := []byte(`{"nickname": "P1", "life": 7, "attack": 7}`)
+	jsonBody := []byte(`{"nickname": "P1", "life": 7, "weaponid": "1ccaac4a-3be5-442f-bba0-e7d78dfdc4a3"}`)
 	bodyReader := bytes.NewReader(jsonBody)
 	request, err := http.NewRequest("POST", "/player", bodyReader)
 
@@ -115,7 +115,7 @@ func TestPlayerHandler(t *testing.T) {
 
 	// Test save player
 
-    jsonBody = []byte(`{"nickname": "P2", "life": 5, "attack": 5}`)
+    jsonBody = []byte(`{"nickname": "P2", "life": 5, "weaponid": "1ccaac4a-3be5-442f-bba0-e7d78dfdc4a3"}`)
 	bodyReader = bytes.NewReader(jsonBody)
 	request, err = http.NewRequest(http.MethodPut, "/player/"+player.ID, bodyReader)
 

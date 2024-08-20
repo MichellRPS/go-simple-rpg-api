@@ -1,17 +1,26 @@
 -- CREATE DATABASE go-simple-rpg-api
 
+CREATE TABLE Weapon (
+    ID UUID PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Attack INT NOT NULL,
+    Defense DECIMAL(1,1) NOT NULL
+);
+
 CREATE TABLE Player (
     ID UUID PRIMARY KEY,
     Nickname VARCHAR(255) NOT NULL,
     Life INT NOT NULL,
-    Attack INT NOT NULL
+    WeaponID UUID NOT NULL,
+    FOREIGN KEY (WeaponID) REFERENCES Weapon(ID)
 );
 
 CREATE TABLE Enemy (
     ID UUID PRIMARY KEY,
     Nickname VARCHAR(255) NOT NULL,
     Life INT NOT NULL,
-    Attack INT NOT NULL
+    WeaponID UUID NOT NULL,
+    FOREIGN KEY (WeaponID) REFERENCES Weapon(ID)
 );
 
 CREATE TABLE Battle (

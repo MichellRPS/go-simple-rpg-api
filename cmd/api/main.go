@@ -32,6 +32,10 @@ func main() {
 	battleService := service.NewBattleService(*battleRepository)
 	battleHandler := handler.NewBattleHandler(battleService)
 
+	weaponRepository := repository.NewWeaponRepository(db)
+	weaponService := service.NewWeaponService(*weaponRepository)
+	weaponHandler := handler.NewWeaponHandler(weaponService)
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("POST /player", playerHandler.AddPlayer)
@@ -48,6 +52,12 @@ func main() {
 
 	mux.HandleFunc("POST /battle", battleHandler.AddBattle)
 	mux.HandleFunc("GET /battle", battleHandler.LoadBattles)
+
+	mux.HandleFunc("POST /weapon", weaponHandler.AddWeapon)
+	mux.HandleFunc("GET /weapon", weaponHandler.LoadWeapons)
+	mux.HandleFunc("DELETE /weapon/{id}", weaponHandler.DeleteWeapon)
+	mux.HandleFunc("GET /weapon/{id}", weaponHandler.LoadWeapon)
+	mux.HandleFunc("PUT /weapon/{id}", weaponHandler.SaveWeapon)
 
 	fmt.Println("Server is running on port 8080")
 	if err := http.ListenAndServe(":8080", mux); err != nil {

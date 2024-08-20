@@ -16,7 +16,7 @@ func NewEnemyRepository(db *sql.DB) *EnemyRepository {
 
 func (er *EnemyRepository) LoadEnemyByNickname(nickname string) (*entity.Enemy, error) {
 	var enemy entity.Enemy
-	err := er.db.QueryRow("SELECT id, nickname, life, attack FROM enemy WHERE nickname LIKE $1", nickname).Scan(&enemy.ID, &enemy.Nickname, &enemy.Life, &enemy.Attack)
+	err := er.db.QueryRow("SELECT id, nickname, life, weaponid FROM enemy WHERE nickname LIKE $1", nickname).Scan(&enemy.ID, &enemy.Nickname, &enemy.Life, &enemy.WeaponID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -27,7 +27,7 @@ func (er *EnemyRepository) LoadEnemyByNickname(nickname string) (*entity.Enemy, 
 }
 
 func (er *EnemyRepository) AddEnemy(enemy *entity.Enemy) (string, error) {
-	_, err := er.db.Exec("INSERT INTO enemy (id, nickname, life, attack) VALUES ($1, $2, $3, $4)", enemy.ID, enemy.Nickname, enemy.Life, enemy.Attack)
+	_, err := er.db.Exec("INSERT INTO enemy (id, nickname, life, weaponid) VALUES ($1, $2, $3, $4)", enemy.ID, enemy.Nickname, enemy.Life, enemy.WeaponID)
 	if err != nil {
 		return "", err
 	}
@@ -35,7 +35,7 @@ func (er *EnemyRepository) AddEnemy(enemy *entity.Enemy) (string, error) {
 }
 
 func (er *EnemyRepository) LoadEnemies() ([]*entity.Enemy, error) {
-	rows, err := er.db.Query("SELECT id, nickname, life, attack FROM enemy")
+	rows, err := er.db.Query("SELECT id, nickname, life, weaponid FROM enemy")
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (er *EnemyRepository) LoadEnemies() ([]*entity.Enemy, error) {
 	var enemies []*entity.Enemy
 	for rows.Next() {
 		var enemy entity.Enemy
-		if err := rows.Scan(&enemy.ID, &enemy.Nickname, &enemy.Life, &enemy.Attack); err != nil {
+		if err := rows.Scan(&enemy.ID, &enemy.Nickname, &enemy.Life, &enemy.WeaponID); err != nil {
 			return nil, err
 		}
 		enemies = append(enemies, &enemy)
@@ -54,7 +54,7 @@ func (er *EnemyRepository) LoadEnemies() ([]*entity.Enemy, error) {
 
 func (er *EnemyRepository) LoadEnemyById(id string) (*entity.Enemy, error) {
 	var enemy entity.Enemy
-	err := er.db.QueryRow("SELECT id, nickname, life, attack FROM enemy WHERE id = $1", id).Scan(&enemy.ID, &enemy.Nickname, &enemy.Life, &enemy.Attack)
+	err := er.db.QueryRow("SELECT id, nickname, life, weaponid FROM enemy WHERE id = $1", id).Scan(&enemy.ID, &enemy.Nickname, &enemy.Life, &enemy.WeaponID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -78,4 +78,22 @@ func (er *EnemyRepository) SaveEnemy(id string, enemy *entity.Enemy) error {
 		return err
 	}
 	return nil
+}
+
+func (er *EnemyRepository) LoadWeapons() ([]*entity.Weapon, error) {
+	rows, err := er.db.Query("SELECT id, name, attack, defense FROM weapon")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var weapons []*entity.Weapon
+	for rows.Next() {
+		var weapon entity.Weapon
+		if err := rows.Scan(&weapon.ID, &weapon.Name, &weapon.Attack, &weapon.Defense); err != nil {
+			return nil, err
+		}
+		weapons = append(weapons, &weapon)
+	}
+	return weapons, nil
 }

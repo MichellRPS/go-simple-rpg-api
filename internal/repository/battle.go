@@ -16,7 +16,7 @@ func NewBattleRepository(db *sql.DB) *BattleRepository {
 
 func (br *BattleRepository) LoadEnemyById(enemyId string) (*entity.Enemy, error) {
 	var enemy entity.Enemy
-	err := br.db.QueryRow("SELECT id, nickname, life, attack FROM enemy WHERE id = $1", enemyId).Scan(&enemy.ID, &enemy.Nickname, &enemy.Life, &enemy.Attack)
+	err := br.db.QueryRow("SELECT id, nickname, life, weaponid FROM enemy WHERE id = $1", enemyId).Scan(&enemy.ID, &enemy.Nickname, &enemy.Life, &enemy.WeaponID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -28,7 +28,7 @@ func (br *BattleRepository) LoadEnemyById(enemyId string) (*entity.Enemy, error)
 
 func (br *BattleRepository) LoadPlayerById(playerId string) (*entity.Player, error) {
 	var player entity.Player
-	err := br.db.QueryRow("SELECT id, nickname, life, attack FROM player WHERE id = $1", playerId).Scan(&player.ID, &player.Nickname, &player.Life, &player.Attack)
+	err := br.db.QueryRow("SELECT id, nickname, life, weaponid FROM player WHERE id = $1", playerId).Scan(&player.ID, &player.Nickname, &player.Life, &player.WeaponID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -78,4 +78,16 @@ func (br *BattleRepository) LoadBattles() ([]*entity.Battle, error) {
 		battles = append(battles, &battle)
 	}
 	return battles, nil
+}
+
+func (br *BattleRepository) LoadWeaponByID(weaponId string) (*entity.Weapon, error) {
+	var weapon entity.Weapon
+	err := br.db.QueryRow("SELECT id, name, attack, defense FROM weapon WHERE id = $1", weaponId).Scan(&weapon.ID, &weapon.Name, &weapon.Attack, &weapon.Defense)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &weapon, nil
 }

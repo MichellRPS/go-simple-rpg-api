@@ -16,17 +16,23 @@ func NewPlayerService(PlayerRepository repository.PlayerRepository) *PlayerServi
 	return &PlayerService{PlayerRepository: PlayerRepository}
 }
 
-func (ps *PlayerService) AddPlayer(nickname string, life, attack int) (*entity.Player, error) {
-	if nickname == "" || life == 0 || attack == 0 {
-		return nil, errors.New("player nickname, life and attack is required")
+func (ps *PlayerService) AddPlayer(nickname string, life int, weaponId string) (*entity.Player, error) {
+	if nickname == "" || life == 0 || weaponId == "" {
+		return nil, errors.New("player nickname, life and weapon id is required")
 	}
 
 	if len(nickname) > 255 {
 		return nil, errors.New("player nickname cannot exceed 255 characters")
 	}
 
-	if attack > 10 || attack <= 0 {
-		return nil, errors.New("player attack must be between 1 and 10")
+	// check if weapon exists
+	weapon, err := ps.PlayerRepository.LoadWeaponById(weaponId)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("internal server error")
+	}
+	if weapon == nil {
+		return nil, errors.New("weapon not found")
 	}
 
 	if life > 100 || life <= 0 {
@@ -42,7 +48,7 @@ func (ps *PlayerService) AddPlayer(nickname string, life, attack int) (*entity.P
 		return nil, errors.New("player nickname already exits")
 	}
 
-	player = entity.NewPlayer(nickname, life, attack)
+	player = entity.NewPlayer(nickname, life, weaponId)
 	if _, err := ps.PlayerRepository.AddPlayer(player); err != nil {
 		fmt.Println(err)
 		return nil, errors.New("internal server error")
@@ -92,7 +98,7 @@ func (ps *PlayerService) LoadPlayer(id string) (*entity.Player, error) {
 	return player, nil
 }
 
-func (ps *PlayerService) SavePlayer(id, nickname string, life, attack int) (*entity.Player, error) {
+func (ps *PlayerService) SavePlayer(id, nickname string, life int, weaponId string) (*entity.Player, error) {
 	player, err := ps.PlayerRepository.LoadPlayerById(id)
 
 	if err != nil {
@@ -118,11 +124,17 @@ func (ps *PlayerService) SavePlayer(id, nickname string, life, attack int) (*ent
 		player.Nickname = nickname
 	}
 
-	if attack != 0 && attack != player.Attack {
-		if attack > 10 || attack <= 0 {
-			return nil, errors.New("player attack must be between 1 and 10")
+	if weaponId != "" && weaponId != player.WeaponID {
+		// check if weapon exists
+		weapon, err := ps.PlayerRepository.LoadWeaponById(weaponId)
+		if err != nil {
+			fmt.Println(err)
+			return nil, errors.New("internal server error")
 		}
-		player.Attack = attack
+		if weapon == nil {
+			return nil, errors.New("weapon not found")
+		}
+		player.WeaponID = weaponId
 	}
 
 	if life != 0 && life != player.Life {

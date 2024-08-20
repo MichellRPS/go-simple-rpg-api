@@ -29,7 +29,7 @@ func TestEnemyRepository(t *testing.T) {
 				t.Fatalf("enemyRepository is nil")
 			}
 
-			enemy := entity.NewEnemy("TestEnemy")
+			enemy := entity.NewEnemy("TestEnemy", "1ccaac4a-3be5-442f-bba0-e7d78dfdc4a3")
 
 			_, err = enemyRepository.AddEnemy(enemy)
 

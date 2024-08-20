@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"math"
 
 	"github.com/MichellRPS/go-simple-rpg-api/internal/entity"
 	repository "github.com/MichellRPS/go-simple-rpg-api/internal/repository"
@@ -48,10 +49,25 @@ func (bs *BattleService) AddBattle(enemyId, playerId string) (*entity.Battle, er
 
 	battle := entity.NewBattle(enemyId, playerId)
 
+	// load player and enemy weapon
+	playerWeapon, err := bs.BattleRepository.LoadWeaponByID(player.WeaponID)
+	if playerWeapon == nil || err != nil {
+		fmt.Println(err)
+		return nil, errors.New("internal server error")
+	}
+	enemyWeapon, err := bs.BattleRepository.LoadWeaponByID(enemy.WeaponID)
+	if enemyWeapon == nil || err != nil {
+		fmt.Println(err)
+		return nil, errors.New("internal server error")
+	}
+
 	// check if enemy won the battle
 	if battle.DiceThrown >= 1 && battle.DiceThrown <= 3 {
-		// subtract player life by enemy attack
-		player.Life -= enemy.Attack
+		// subtract player life by enemy weapon attack minus player weapon defense
+		enemyWeapon.Attack -= int(math.Round(float64(enemyWeapon.Attack) * playerWeapon.Defense))
+		if enemyWeapon.Attack > 0 {
+			player.Life -= enemyWeapon.Attack
+		}
 		err := bs.BattleRepository.SavePlayerLife(player)
 		if err != nil {
 			fmt.Println(err)
@@ -61,8 +77,11 @@ func (bs *BattleService) AddBattle(enemyId, playerId string) (*entity.Battle, er
 
 	// check if player won the battle
 	if battle.DiceThrown >= 4 && battle.DiceThrown <= 6 {
-		// subtract enemy life by player attack
-		enemy.Life -= player.Attack
+		// subtract enemy life by player weapon attack minus enemy weapon defense
+		playerWeapon.Attack -= int(math.Round(float64(playerWeapon.Attack) * enemyWeapon.Defense))
+		if playerWeapon.Attack > 0 {
+			enemy.Life -= playerWeapon.Attack
+		}
 		err := bs.BattleRepository.SaveEnemyLife(enemy)
 		if err != nil {
 			fmt.Println(err)

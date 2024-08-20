@@ -33,7 +33,7 @@ func TestBattleHandler(t *testing.T) {
 
 	// Test add battle
 
-	jsonBody := []byte(`{"enemyid": "9d27b44f-808c-4d6e-be48-3c834d27b824", "playerid": "97b0c0fe-a311-44fd-ad87-0bcb98057843"}`)
+	jsonBody := []byte(`{"enemyid": "e12bfb79-24bb-4474-a97b-6ef8456043bf", "playerid": "825bc34b-6ef8-4070-84b1-46e5bf900e55"}`)
 	bodyReader := bytes.NewReader(jsonBody)
 	request, err := http.NewRequest("POST", "/battle", bodyReader)
 

@@ -29,7 +29,7 @@ func TestPlayerRepository(t *testing.T) {
 				t.Fatalf("playerRepository is nil")
 			}
 
-			p := entity.NewPlayer("TestPlayer", 10, 10)
+			p := entity.NewPlayer("TestPlayer", 10, "1ccaac4a-3be5-442f-bba0-e7d78dfdc4a3")
 
 			_, e := playerRepository.AddPlayer(p)
 

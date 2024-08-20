@@ -9,25 +9,25 @@ import (
 	"github.com/MichellRPS/go-simple-rpg-api/internal/service"
 )
 
-type PlayerHandler struct {
-	PlayerService *service.PlayerService
+type WeaponHandler struct {
+	WeaponService *service.WeaponService
 }
 
-func NewPlayerHandler(playerService *service.PlayerService) *PlayerHandler {
-	return &PlayerHandler{PlayerService: playerService}
+func NewWeaponHandler(weaponService *service.WeaponService) *WeaponHandler {
+	return &WeaponHandler{WeaponService: weaponService}
 }
 
-func (ph *PlayerHandler) AddPlayer(w http.ResponseWriter, r *http.Request) {
+func (wh *WeaponHandler) AddWeapon(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var player entity.Player
-	if err := json.NewDecoder(r.Body).Decode(&player); err != nil {
+	var weapon entity.Weapon
+	if err := json.NewDecoder(r.Body).Decode(&weapon); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(entity.ErrorResponse{Message: "internal server error"})
 		return
 	}
 
-	result, err := ph.PlayerService.AddPlayer(player.Nickname, player.Life, player.WeaponID)
+	result, err := wh.WeaponService.AddWeapon(weapon.Name, weapon.Attack, weapon.Defense)
 	if err != nil {
 		switch {
 		case strings.Contains(err.Error(), "internal server error"):
@@ -43,10 +43,10 @@ func (ph *PlayerHandler) AddPlayer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
-func (ph *PlayerHandler) LoadPlayers(w http.ResponseWriter, r *http.Request) {
+func (wh *WeaponHandler) LoadWeapons(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	players, err := ph.PlayerService.LoadPlayers()
+	weapons, err := wh.WeaponService.LoadWeapons()
 	if err != nil {
 		switch {
 		case strings.Contains(err.Error(), "internal server error"):
@@ -59,15 +59,15 @@ func (ph *PlayerHandler) LoadPlayers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(players)
+	json.NewEncoder(w).Encode(weapons)
 }
 
-func (ph *PlayerHandler) DeletePlayer(w http.ResponseWriter, r *http.Request) {
+func (wh *WeaponHandler) DeleteWeapon(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	id := r.PathValue("id")
 
-	if err := ph.PlayerService.DeletePlayer(id); err != nil {
+	if err := wh.WeaponService.DeleteWeapon(id); err != nil {
 		switch {
 		case strings.Contains(err.Error(), "internal server error"):
 			w.WriteHeader(http.StatusInternalServerError)
@@ -82,12 +82,12 @@ func (ph *PlayerHandler) DeletePlayer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(nil)
 }
 
-func (ph *PlayerHandler) LoadPlayer(w http.ResponseWriter, r *http.Request) {
+func (wh *WeaponHandler) LoadWeapon(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	id := r.PathValue("id")
 
-	player, err := ph.PlayerService.LoadPlayer(id)
+	weapon, err := wh.WeaponService.LoadWeapon(id)
 
 	if err != nil {
 		switch {
@@ -101,22 +101,22 @@ func (ph *PlayerHandler) LoadPlayer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(player)
+	json.NewEncoder(w).Encode(weapon)
 }
 
-func (ph *PlayerHandler) SavePlayer(w http.ResponseWriter, r *http.Request) {
+func (wh *WeaponHandler) SaveWeapon(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	id := r.PathValue("id")
 
-	var player entity.Player
-	if err := json.NewDecoder(r.Body).Decode(&player); err != nil {
+	var weapon entity.Weapon
+	if err := json.NewDecoder(r.Body).Decode(&weapon); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(entity.ErrorResponse{Message: "internal server error"})
 		return
 	}
 
-	result, err := ph.PlayerService.SavePlayer(id, player.Nickname, player.Life, player.WeaponID)
+	result, err := wh.WeaponService.SaveWeapon(id, weapon.Name, weapon.Attack, weapon.Defense)
 	if err != nil {
 		switch {
 		case strings.Contains(err.Error(), "internal server error"):

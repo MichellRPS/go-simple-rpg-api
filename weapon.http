@@ -1,0 +1,76 @@
+POST http://localhost:8080/weapon HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Iron Sword",
+    "attack": 4,
+    "defense": 0.2
+}
+
+###
+
+POST http://localhost:8080/weapon HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Iron Shield",
+    "attack": 2,
+    "defense": 0.4
+}
+
+###
+
+POST http://localhost:8080/weapon HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Steel Sword",
+    "attack": 6,
+    "defense": 0.3
+}
+
+###
+
+POST http://localhost:8080/weapon HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Steel Shield",
+    "attack": 3,
+    "defense": 0.6
+}
+
+###
+
+GET http://localhost:8080/weapon HTTP/1.1
+content-type: application/json
+
+{
+}
+
+###
+
+DELETE http://localhost:8080/weapon/5bdb4d6f-7034-4798-9777-6df723ac5f80 HTTP/1.1
+content-type: application/json
+
+{
+}
+
+###
+
+GET http://localhost:8080/weapon/5bdb4d6f-7034-4798-9777-6df723ac5f80 HTTP/1.1
+content-type: application/json
+
+{
+}
+
+###
+
+PUT http://localhost:8080/weapon/5bdb4d6f-7034-4798-9777-6df723ac5f80 HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Iron Sword",
+    "attack": 4,
+    "defense": 0.2
+}

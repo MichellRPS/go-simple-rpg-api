@@ -8,14 +8,14 @@ import (
 
 func TestNewPlayer(t *testing.T) {
 	testCases := []Player{
-		{"", "TheClip", 1, 1},
-		{"", "TheClipBR", 5, 5},
-		{"", "LongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNickname", 10, 10},
+		{"", "TheClip", 1, "1ccaac4a-3be5-442f-bba0-e7d78dfdc4a3"},
+		{"", "TheClipBR", 5, "177b7b6f-ba70-4dc9-aae6-a92c07a02a2e"},
+		{"", "LongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNickname", 10, "0a96a984-2f14-43d6-9563-1ec193f6e932"},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.Nickname, func(t *testing.T) {
-			player := NewPlayer(tc.Nickname, tc.Life, tc.Attack)
+			player := NewPlayer(tc.Nickname, tc.Life, tc.WeaponID)
 
 			// Test type
 			if player == nil {
@@ -43,12 +43,9 @@ func TestNewPlayer(t *testing.T) {
 				t.Errorf("Expected player.Life to be in range [1, 10]; got %d", player.Life)
 			}
 
-			// Test Attack value
-			if player.Attack != tc.Attack {
-				t.Errorf("Expected player.Attack = %d; got %d", tc.Attack, player.Attack)
-			}
-			if player.Attack < 1 || player.Attack > 10 {
-				t.Errorf("Expected player.Attack to be in range [1, 10]; got %d", player.Attack)
+			// Test WeaponID value
+			if _, err := uuid.Parse(player.WeaponID); err != nil {
+				t.Errorf("Expected player.WeaponID to be a valid UUID; got %s; %s", player.WeaponID, err.Error())
 			}
 		})
 	}

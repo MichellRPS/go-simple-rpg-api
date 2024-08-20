@@ -32,7 +32,7 @@ func TestEnemyService(t *testing.T) {
 				t.Fatalf("enemyService is nil")
 			}
 
-			enemy, err := enemyService.AddEnemy("TestEnemy")
+			enemy, err := enemyService.AddEnemy("TestEnemy", "1ccaac4a-3be5-442f-bba0-e7d78dfdc4a3")
 
 			if err != nil {
 				t.Errorf("enemyService.AddEnemy returned an error; %s", err.Error())

@@ -27,7 +27,15 @@ func (eh *EnemyHandler) AddEnemy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := eh.EnemyService.AddEnemy(enemy.Nickname)
+	// select random weapon
+	weaponId, err := eh.EnemyService.SelectEnemyWeaponID()
+	if weaponId == "" || err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(entity.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	result, err := eh.EnemyService.AddEnemy(enemy.Nickname, weaponId)
 	if err != nil {
 		switch {
 		case strings.Contains(err.Error(), "internal server error"):

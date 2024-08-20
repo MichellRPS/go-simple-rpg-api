@@ -9,14 +9,14 @@ type Enemy struct {
 	ID       string
 	Nickname string
 	Life     int
-	Attack   int
+	WeaponID string
 }
 
-func NewEnemy(nickname string) *Enemy {
+func NewEnemy(nickname, weaponId string) *Enemy {
 	return &Enemy{
 		ID:       uuid.New().String(),
 		Nickname: nickname,
 		Life:     rand.Intn(10) + 1,
-		Attack:   rand.Intn(10) + 1,
+		WeaponID: weaponId,
 	}
 }

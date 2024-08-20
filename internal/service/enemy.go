@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 
 	"github.com/MichellRPS/go-simple-rpg-api/internal/entity"
 	repository "github.com/MichellRPS/go-simple-rpg-api/internal/repository"
@@ -16,7 +17,7 @@ func NewEnemyService(EnemyRepository repository.EnemyRepository) *EnemyService {
 	return &EnemyService{EnemyRepository: EnemyRepository}
 }
 
-func (es *EnemyService) AddEnemy(nickname string) (*entity.Enemy, error) {
+func (es *EnemyService) AddEnemy(nickname, weaponId string) (*entity.Enemy, error) {
 	if nickname == "" {
 		return nil, errors.New("enemy nickname is required")
 	}
@@ -34,7 +35,7 @@ func (es *EnemyService) AddEnemy(nickname string) (*entity.Enemy, error) {
 		return nil, errors.New("enemy nickname already exits")
 	}
 
-	enemy = entity.NewEnemy(nickname)
+	enemy = entity.NewEnemy(nickname, weaponId)
 	if _, err := es.EnemyRepository.AddEnemy(enemy); err != nil {
 		fmt.Println(err)
 		return nil, errors.New("internal server error")
@@ -115,4 +116,13 @@ func (es *EnemyService) SaveEnemy(id, nickname string) (*entity.Enemy, error) {
 		return nil, errors.New("internal server error")
 	}
 	return enemy, nil
+}
+
+func (es *EnemyService) SelectEnemyWeaponID() (string, error) {
+	weapons, err := es.EnemyRepository.LoadWeapons()
+	if err != nil || weapons == nil {
+		fmt.Println(err)
+		return "", errors.New("internal server error")
+	}
+	return weapons[rand.Intn(len(weapons))].ID, nil
 }
