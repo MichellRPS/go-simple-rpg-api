@@ -35,6 +35,7 @@ func TestEnemyHandler(t *testing.T) {
 	mux.HandleFunc("DELETE /enemy/{id}", enemyHandler.DeleteEnemy)
 	mux.HandleFunc("GET /enemy/{id}", enemyHandler.LoadEnemy)
 	mux.HandleFunc("PUT /enemy/{id}", enemyHandler.SaveEnemy)
+	mux.HandleFunc("GET /enemy/{id}/repair-weapon", enemyHandler.RepairEnemyWeapon)
 
 	// Test add enemy
 
@@ -132,6 +133,28 @@ func TestEnemyHandler(t *testing.T) {
 	if status := responseRecorder.Code; status != http.StatusOK {
 		t.Errorf(
 			"enemyHandler.SaveEnemy returned wrong status code: got %v want %v",
+			status,
+			http.StatusOK,
+		)
+	}
+
+	// Test repair weapon
+
+	request, err = http.NewRequest("GET", "/enemy/"+enemy.ID+"/repair-weapon", nil)
+
+	if err != nil {
+		t.Fatalf(
+			"http.NewRequest returned an error: %v",
+			err,
+		)
+	}
+
+	responseRecorder = httptest.NewRecorder()
+	mux.ServeHTTP(responseRecorder, request)
+
+	if status := responseRecorder.Code; status != http.StatusOK {
+		t.Errorf(
+			"enemyHandler.RepairEnemyWeapon returned wrong status code: got %v want %v",
 			status,
 			http.StatusOK,
 		)

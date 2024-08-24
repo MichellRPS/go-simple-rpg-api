@@ -8,14 +8,14 @@ import (
 
 func TestNewPlayer(t *testing.T) {
 	testCases := []Player{
-		{"", "TheClip", 1, "1ccaac4a-3be5-442f-bba0-e7d78dfdc4a3"},
-		{"", "TheClipBR", 5, "177b7b6f-ba70-4dc9-aae6-a92c07a02a2e"},
-		{"", "LongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNickname", 10, "0a96a984-2f14-43d6-9563-1ec193f6e932"},
+		{"", "TheClip", 1, "8c3910f5-7248-40c7-b0c2-38446f328ce9", 8},
+		{"", "TheClipBR", 5, "9b48bd04-d944-463b-be4e-a4eef73d7e15", 7},
+		{"", "LongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNicknameLongNickname", 10, "476544a3-029b-4f49-8631-e13ada552ec7", 10},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.Nickname, func(t *testing.T) {
-			player := NewPlayer(tc.Nickname, tc.Life, tc.WeaponID)
+			player := NewPlayer(tc.Nickname, tc.Life, tc.WeaponID, tc.WeaponDurability)
 
 			// Test type
 			if player == nil {
@@ -46,6 +46,11 @@ func TestNewPlayer(t *testing.T) {
 			// Test WeaponID value
 			if _, err := uuid.Parse(player.WeaponID); err != nil {
 				t.Errorf("Expected player.WeaponID to be a valid UUID; got %s; %s", player.WeaponID, err.Error())
+			}
+
+			// Test WeaponDurability value
+			if player.WeaponDurability < 1 || player.WeaponDurability > 10 {
+				t.Errorf("Expected player.WeaponDurability to be in range [1, 10]; got %d", player.WeaponDurability)
 			}
 		})
 	}

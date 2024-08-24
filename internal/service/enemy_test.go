@@ -32,7 +32,7 @@ func TestEnemyService(t *testing.T) {
 				t.Fatalf("enemyService is nil")
 			}
 
-			enemy, err := enemyService.AddEnemy("TestEnemy", "1ccaac4a-3be5-442f-bba0-e7d78dfdc4a3")
+			enemy, err := enemyService.AddEnemy("TestEnemy")
 
 			if err != nil {
 				t.Errorf("enemyService.AddEnemy returned an error; %s", err.Error())
@@ -54,6 +54,12 @@ func TestEnemyService(t *testing.T) {
 
 			if err != nil {
 				t.Errorf("enemyService.SaveEnemy returned an error; %s", err.Error())
+			}
+
+			_, err = enemyService.RepairEnemyWeapon(enemy.ID)
+
+			if err != nil {
+				t.Errorf("enemyService.RepairEnemyWeapon returned an error; %s", err.Error())
 			}
 
 			err = enemyService.DeleteEnemy(enemy.ID)

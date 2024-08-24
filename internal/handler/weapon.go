@@ -27,7 +27,7 @@ func (wh *WeaponHandler) AddWeapon(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := wh.WeaponService.AddWeapon(weapon.Name, weapon.Attack, weapon.Defense)
+	result, err := wh.WeaponService.AddWeapon(weapon.Name, weapon.Attack, weapon.Defense, weapon.Durability)
 	if err != nil {
 		switch {
 		case strings.Contains(err.Error(), "internal server error"):
@@ -116,7 +116,7 @@ func (wh *WeaponHandler) SaveWeapon(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := wh.WeaponService.SaveWeapon(id, weapon.Name, weapon.Attack, weapon.Defense)
+	result, err := wh.WeaponService.SaveWeapon(id, weapon.Name, weapon.Attack, weapon.Defense, weapon.Durability)
 	if err != nil {
 		switch {
 		case strings.Contains(err.Error(), "internal server error"):

@@ -16,7 +16,7 @@ func NewBattleRepository(db *sql.DB) *BattleRepository {
 
 func (br *BattleRepository) LoadEnemyById(enemyId string) (*entity.Enemy, error) {
 	var enemy entity.Enemy
-	err := br.db.QueryRow("SELECT id, nickname, life, weaponid FROM enemy WHERE id = $1", enemyId).Scan(&enemy.ID, &enemy.Nickname, &enemy.Life, &enemy.WeaponID)
+	err := br.db.QueryRow("SELECT id, nickname, life, weaponid, weapondurability FROM enemy WHERE id = $1", enemyId).Scan(&enemy.ID, &enemy.Nickname, &enemy.Life, &enemy.WeaponID, &enemy.WeaponDurability)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -28,7 +28,7 @@ func (br *BattleRepository) LoadEnemyById(enemyId string) (*entity.Enemy, error)
 
 func (br *BattleRepository) LoadPlayerById(playerId string) (*entity.Player, error) {
 	var player entity.Player
-	err := br.db.QueryRow("SELECT id, nickname, life, weaponid FROM player WHERE id = $1", playerId).Scan(&player.ID, &player.Nickname, &player.Life, &player.WeaponID)
+	err := br.db.QueryRow("SELECT id, nickname, life, weaponid, weapondurability FROM player WHERE id = $1", playerId).Scan(&player.ID, &player.Nickname, &player.Life, &player.WeaponID, &player.WeaponDurability)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -82,7 +82,7 @@ func (br *BattleRepository) LoadBattles() ([]*entity.Battle, error) {
 
 func (br *BattleRepository) LoadWeaponByID(weaponId string) (*entity.Weapon, error) {
 	var weapon entity.Weapon
-	err := br.db.QueryRow("SELECT id, name, attack, defense FROM weapon WHERE id = $1", weaponId).Scan(&weapon.ID, &weapon.Name, &weapon.Attack, &weapon.Defense)
+	err := br.db.QueryRow("SELECT id, name, attack, defense, durability FROM weapon WHERE id = $1", weaponId).Scan(&weapon.ID, &weapon.Name, &weapon.Attack, &weapon.Defense, &weapon.Durability)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -90,4 +90,28 @@ func (br *BattleRepository) LoadWeaponByID(weaponId string) (*entity.Weapon, err
 		return nil, err
 	}
 	return &weapon, nil
+}
+
+func (br *BattleRepository) SaveEnemyWeaponDurability(enemyId string, enemyWeaponDurability int) error {
+	if enemyWeaponDurability < 0 {
+		enemyWeaponDurability = 0
+	}
+
+	_, err := br.db.Exec("UPDATE enemy SET weapondurability = $1 WHERE id = $2", enemyWeaponDurability, enemyId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (br *BattleRepository) SavePlayerWeaponDurability(playerId string, playerWeaponDurability int) error {
+	if playerWeaponDurability < 0 {
+		playerWeaponDurability = 0
+	}
+
+	_, err := br.db.Exec("UPDATE player SET weapondurability = $1 WHERE id = $2", playerWeaponDurability, playerId)
+	if err != nil {
+		return err
+	}
+	return nil
 }

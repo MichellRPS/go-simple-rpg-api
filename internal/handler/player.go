@@ -131,3 +131,24 @@ func (ph *PlayerHandler) SavePlayer(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(result)
 }
+
+func (ph *PlayerHandler) RepairPlayerWeapon(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	id := r.PathValue("id")
+
+	player, err := ph.PlayerService.RepairPlayerWeapon(id)
+	if err != nil {
+		switch {
+		case strings.Contains(err.Error(), "internal server error"):
+			w.WriteHeader(http.StatusInternalServerError)
+		default:
+			w.WriteHeader(http.StatusBadRequest)
+		}
+		json.NewEncoder(w).Encode(entity.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(player)
+}

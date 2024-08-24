@@ -16,9 +16,9 @@ func NewWeaponService(WeaponRepository repository.WeaponRepository) *WeaponServi
 	return &WeaponService{WeaponRepository: WeaponRepository}
 }
 
-func (ws *WeaponService) AddWeapon(name string, attack int, defense float64) (*entity.Weapon, error) {
-	if name == "" || attack == 0 || defense == 0 {
-		return nil, errors.New("weapon name, attack and defense is required")
+func (ws *WeaponService) AddWeapon(name string, attack int, defense float64, durability int) (*entity.Weapon, error) {
+	if name == "" || attack == 0 || defense == 0 || durability == 0 {
+		return nil, errors.New("weapon name, attack, defense and durability is required")
 	}
 
 	if len(name) > 255 {
@@ -33,6 +33,10 @@ func (ws *WeaponService) AddWeapon(name string, attack int, defense float64) (*e
 		return nil, errors.New("weapon attack must be between 1 and 100")
 	}
 
+	if durability > 10 || durability <= 0 {
+		return nil, errors.New("weapon durability must be between 1 and 10")
+	}
+
 	weapon, err := ws.WeaponRepository.LoadWeaponByName(name)
 	if err != nil {
 		fmt.Println(err)
@@ -42,7 +46,7 @@ func (ws *WeaponService) AddWeapon(name string, attack int, defense float64) (*e
 		return nil, errors.New("weapon name already exits")
 	}
 
-	weapon = entity.NewWeapon(name, attack, defense)
+	weapon = entity.NewWeapon(name, attack, defense, durability)
 	if _, err := ws.WeaponRepository.AddWeapon(weapon); err != nil {
 		fmt.Println(err)
 		return nil, errors.New("internal server error")
@@ -92,7 +96,7 @@ func (ws *WeaponService) LoadWeapon(id string) (*entity.Weapon, error) {
 	return weapon, nil
 }
 
-func (ws *WeaponService) SaveWeapon(id, name string, attack int, defense float64) (*entity.Weapon, error) {
+func (ws *WeaponService) SaveWeapon(id, name string, attack int, defense float64, durability int) (*entity.Weapon, error) {
 	weapon, err := ws.WeaponRepository.LoadWeaponById(id)
 
 	if err != nil {
@@ -130,6 +134,13 @@ func (ws *WeaponService) SaveWeapon(id, name string, attack int, defense float64
 			return nil, errors.New("weapon attack must be between 1 and 100")
 		}
 		weapon.Attack = attack
+	}
+
+	if durability != 0 && durability != weapon.Durability {
+		if durability > 10 || durability <= 0 {
+			return nil, errors.New("weapon durability must be between 1 and 10")
+		}
+		weapon.Durability = durability
 	}
 
 	if err := ws.WeaponRepository.SaveWeapon(id, weapon); err != nil {

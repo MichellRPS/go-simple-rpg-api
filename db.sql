@@ -4,7 +4,8 @@ CREATE TABLE Weapon (
     ID UUID PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
     Attack INT NOT NULL,
-    Defense DECIMAL(1,1) NOT NULL
+    Defense DECIMAL(1,1) NOT NULL,
+    Durability INT NOT NULL
 );
 
 CREATE TABLE Player (
@@ -12,6 +13,7 @@ CREATE TABLE Player (
     Nickname VARCHAR(255) NOT NULL,
     Life INT NOT NULL,
     WeaponID UUID NOT NULL,
+    WeaponDurability INT NOT NULL,
     FOREIGN KEY (WeaponID) REFERENCES Weapon(ID)
 );
 
@@ -20,6 +22,7 @@ CREATE TABLE Enemy (
     Nickname VARCHAR(255) NOT NULL,
     Life INT NOT NULL,
     WeaponID UUID NOT NULL,
+    WeaponDurability INT NOT NULL,
     FOREIGN KEY (WeaponID) REFERENCES Weapon(ID)
 );
 

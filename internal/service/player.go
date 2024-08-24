@@ -48,7 +48,7 @@ func (ps *PlayerService) AddPlayer(nickname string, life int, weaponId string) (
 		return nil, errors.New("player nickname already exits")
 	}
 
-	player = entity.NewPlayer(nickname, life, weaponId)
+	player = entity.NewPlayer(nickname, life, weapon.ID, weapon.Durability)
 	if _, err := ps.PlayerRepository.AddPlayer(player); err != nil {
 		fmt.Println(err)
 		return nil, errors.New("internal server error")
@@ -135,6 +135,7 @@ func (ps *PlayerService) SavePlayer(id, nickname string, life int, weaponId stri
 			return nil, errors.New("weapon not found")
 		}
 		player.WeaponID = weaponId
+		player.WeaponDurability = weapon.Durability
 	}
 
 	if life != 0 && life != player.Life {
@@ -148,5 +149,36 @@ func (ps *PlayerService) SavePlayer(id, nickname string, life int, weaponId stri
 		fmt.Println(err)
 		return nil, errors.New("internal server error")
 	}
+	return player, nil
+}
+
+func (ps *PlayerService) RepairPlayerWeapon(id string) (*entity.Player, error) {
+	player, err := ps.PlayerRepository.LoadPlayerById(id)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("internal server error")
+	}
+
+	if player == nil {
+		return nil, errors.New("player id not found")
+	}
+
+	weapon, err := ps.PlayerRepository.LoadWeaponById(player.WeaponID)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("internal server error")
+	}
+
+	if weapon == nil {
+		return nil, errors.New("weapon not found")
+	}
+
+	if err := ps.PlayerRepository.SavePlayerWeaponDurability(id, weapon.Durability); err != nil {
+		fmt.Println(err)
+		return nil, errors.New("internal server error")
+	}
+
 	return player, nil
 }

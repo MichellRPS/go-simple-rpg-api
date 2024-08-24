@@ -6,17 +6,19 @@ import (
 )
 
 type Enemy struct {
-	ID       string
-	Nickname string
-	Life     int
-	WeaponID string
+	ID               string
+	Nickname         string
+	Life             int
+	WeaponID         string
+	WeaponDurability int
 }
 
-func NewEnemy(nickname, weaponId string) *Enemy {
+func NewEnemy(nickname, weaponId string, weaponDurability int) *Enemy {
 	return &Enemy{
-		ID:       uuid.New().String(),
-		Nickname: nickname,
-		Life:     rand.Intn(10) + 1,
-		WeaponID: weaponId,
+		ID:               uuid.New().String(),
+		Nickname:         nickname,
+		Life:             rand.Intn(10) + 1,
+		WeaponID:         weaponId,
+		WeaponDurability: weaponDurability,
 	}
 }

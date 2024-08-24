@@ -43,12 +43,14 @@ func main() {
 	mux.HandleFunc("DELETE /player/{id}", playerHandler.DeletePlayer)
 	mux.HandleFunc("GET /player/{id}", playerHandler.LoadPlayer)
 	mux.HandleFunc("PUT /player/{id}", playerHandler.SavePlayer)
+	mux.HandleFunc("GET /player/{id}/repair-weapon", playerHandler.RepairPlayerWeapon)
 
 	mux.HandleFunc("POST /enemy", enemyHandler.AddEnemy)
 	mux.HandleFunc("GET /enemy", enemyHandler.LoadEnemies)
 	mux.HandleFunc("DELETE /enemy/{id}", enemyHandler.DeleteEnemy)
 	mux.HandleFunc("GET /enemy/{id}", enemyHandler.LoadEnemy)
 	mux.HandleFunc("PUT /enemy/{id}", enemyHandler.SaveEnemy)
+	mux.HandleFunc("GET /enemy/{id}/repair-weapon", enemyHandler.RepairEnemyWeapon)
 
 	mux.HandleFunc("POST /battle", battleHandler.AddBattle)
 	mux.HandleFunc("GET /battle", battleHandler.LoadBattles)

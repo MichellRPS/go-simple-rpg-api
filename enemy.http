@@ -2,7 +2,7 @@ POST http://localhost:8080/enemy HTTP/1.1
 content-type: application/json
 
 {
-    "nickname": "E1"
+    "nickname": "E6"
 }
 
 ###
@@ -11,7 +11,7 @@ POST http://localhost:8080/enemy HTTP/1.1
 content-type: application/json
 
 {
-    "nickname": "E2"
+    "nickname": "E7"
 }
 
 ###
@@ -23,7 +23,7 @@ content-type: application/json
 
 ###
 
-DELETE http://localhost:8080/enemy/47e23a4b-6152-40be-bccb-6e1f15921b45 HTTP/1.1
+DELETE http://localhost:8080/enemy/fffd907d-a934-43b9-8ec4-cd56db4cc7e5 HTTP/1.1
 content-type: application/json
 
 {
@@ -31,7 +31,7 @@ content-type: application/json
 
 ###
 
-GET http://localhost:8080/enemy/47e23a4b-6152-40be-bccb-6e1f15921b45 HTTP/1.1
+GET http://localhost:8080/enemy/7a3b9e2a-3097-4a0b-a18c-1f1b1ac6fd3f HTTP/1.1
 content-type: application/json
 
 {
@@ -39,9 +39,17 @@ content-type: application/json
 
 ###
 
-PUT http://localhost:8080/enemy/47e23a4b-6152-40be-bccb-6e1f15921b45 HTTP/1.1
+PUT http://localhost:8080/enemy/7a3b9e2a-3097-4a0b-a18c-1f1b1ac6fd3f HTTP/1.1
 content-type: application/json
 
 {
-    "nickname": "E2"
+    "nickname": "E3"
+}
+
+###
+
+GET http://localhost:8080/enemy/7a3b9e2a-3097-4a0b-a18c-1f1b1ac6fd3f/repair-weapon HTTP/1.1
+content-type: application/json
+
+{
 }

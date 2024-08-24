@@ -27,15 +27,7 @@ func (eh *EnemyHandler) AddEnemy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// select random weapon
-	weaponId, err := eh.EnemyService.SelectEnemyWeaponID()
-	if weaponId == "" || err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(entity.ErrorResponse{Message: err.Error()})
-		return
-	}
-
-	result, err := eh.EnemyService.AddEnemy(enemy.Nickname, weaponId)
+	result, err := eh.EnemyService.AddEnemy(enemy.Nickname)
 	if err != nil {
 		switch {
 		case strings.Contains(err.Error(), "internal server error"):
@@ -138,4 +130,25 @@ func (eh *EnemyHandler) SaveEnemy(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(result)
+}
+
+func (eh *EnemyHandler) RepairEnemyWeapon(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	id := r.PathValue("id")
+
+	enemy, err := eh.EnemyService.RepairEnemyWeapon(id)
+	if err != nil {
+		switch {
+		case strings.Contains(err.Error(), "internal server error"):
+			w.WriteHeader(http.StatusInternalServerError)
+		default:
+			w.WriteHeader(http.StatusBadRequest)
+		}
+		json.NewEncoder(w).Encode(entity.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(enemy)
 }

@@ -4,7 +4,7 @@ content-type: application/json
 {
     "nickname": "P1",
     "life": 10,
-    "weaponid": "177b7b6f-ba70-4dc9-aae6-a92c07a02a2e"
+    "weaponid": "9b48bd04-d944-463b-be4e-a4eef73d7e15"
 }
 
 ###
@@ -16,7 +16,7 @@ content-type: application/json
 
 ###
 
-DELETE http://localhost:8080/player/825bc34b-6ef8-4070-84b1-46e5bf900e55 HTTP/1.1
+DELETE http://localhost:8080/player/80061c64-d87d-48fb-bf80-28d968794c46 HTTP/1.1
 content-type: application/json
 
 {
@@ -24,7 +24,7 @@ content-type: application/json
 
 ###
 
-GET http://localhost:8080/player/825bc34b-6ef8-4070-84b1-46e5bf900e55 HTTP/1.1
+GET http://localhost:8080/player/e963ebd9-e856-4c9d-8b94-89c3f1b36109 HTTP/1.1
 content-type: application/json
 
 {
@@ -32,11 +32,19 @@ content-type: application/json
 
 ###
 
-PUT http://localhost:8080/player/825bc34b-6ef8-4070-84b1-46e5bf900e55 HTTP/1.1
+PUT http://localhost:8080/player/e963ebd9-e856-4c9d-8b94-89c3f1b36109 HTTP/1.1
 content-type: application/json
 
 {
     "nickname": "P1",
     "life": 100,
     "weaponid": "177b7b6f-ba70-4dc9-aae6-a92c07a02a2e"
+}
+
+###
+
+GET http://localhost:8080/player/e963ebd9-e856-4c9d-8b94-89c3f1b36109/repair-weapon HTTP/1.1
+content-type: application/json
+
+{
 }

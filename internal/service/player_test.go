@@ -31,7 +31,7 @@ func TestPlayerService(t *testing.T) {
 				t.Fatalf("playerService is nil")
 			}
 
-			player, err := playerService.AddPlayer("TestPlayer", 10, "1ccaac4a-3be5-442f-bba0-e7d78dfdc4a3")
+			player, err := playerService.AddPlayer("TestPlayer", 10, "8c3910f5-7248-40c7-b0c2-38446f328ce9")
 
 			if err != nil {
 				t.Errorf("playerService.AddPlayer returned an error; %s", err.Error())
@@ -53,6 +53,12 @@ func TestPlayerService(t *testing.T) {
 
 			if err != nil {
 				t.Errorf("playerService.SavePlayer returned an error; %s", err.Error())
+			}
+
+			_, err = playerService.RepairPlayerWeapon(player.ID)
+
+			if err != nil {
+				t.Errorf("playerService.RepairPlayerWeapon returned an error; %s", err.Error())
 			}
 
 			err = playerService.DeletePlayer(player.ID)

@@ -2,8 +2,8 @@ POST http://localhost:8080/battle HTTP/1.1
 content-type: application/json
 
 {
-    "EnemyID":  "7fcbd1a2-ba12-4b1b-a4d5-c6b8dae7c684",
-    "PlayerID": "825bc34b-6ef8-4070-84b1-46e5bf900e55"
+    "EnemyID":  "e8eaa794-b094-4040-831b-e7f4fd8fde4f",
+    "PlayerID": "e963ebd9-e856-4c9d-8b94-89c3f1b36109"
 }
 
 ###

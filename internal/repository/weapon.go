@@ -16,7 +16,7 @@ func NewWeaponRepository(db *sql.DB) *WeaponRepository {
 }
 
 func (wr *WeaponRepository) LoadWeapons() ([]*entity.Weapon, error) {
-	rows, err := wr.db.Query("SELECT id, name, attack, defense FROM weapon")
+	rows, err := wr.db.Query("SELECT id, name, attack, defense, durability FROM weapon")
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func (wr *WeaponRepository) LoadWeapons() ([]*entity.Weapon, error) {
 	var weapons []*entity.Weapon
 	for rows.Next() {
 		var weapon entity.Weapon
-		if err := rows.Scan(&weapon.ID, &weapon.Name, &weapon.Attack, &weapon.Defense); err != nil {
+		if err := rows.Scan(&weapon.ID, &weapon.Name, &weapon.Attack, &weapon.Defense, &weapon.Durability); err != nil {
 			return nil, err
 		}
 		weapons = append(weapons, &weapon)
@@ -35,7 +35,7 @@ func (wr *WeaponRepository) LoadWeapons() ([]*entity.Weapon, error) {
 
 func (wr *WeaponRepository) LoadWeaponById(id string) (*entity.Weapon, error) {
 	var weapon entity.Weapon
-	err := wr.db.QueryRow("SELECT id, name, attack, defense FROM weapon WHERE id = $1", id).Scan(&weapon.ID, &weapon.Name, &weapon.Attack, &weapon.Defense)
+	err := wr.db.QueryRow("SELECT id, name, attack, defense, durability FROM weapon WHERE id = $1", id).Scan(&weapon.ID, &weapon.Name, &weapon.Attack, &weapon.Defense, &weapon.Durability)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -47,7 +47,7 @@ func (wr *WeaponRepository) LoadWeaponById(id string) (*entity.Weapon, error) {
 
 func (wr *WeaponRepository) LoadWeaponByName(name string) (*entity.Weapon, error) {
 	var weapon entity.Weapon
-	err := wr.db.QueryRow("SELECT id, name, attack, defense FROM weapon WHERE name LIKE $1", name).Scan(&weapon.ID, &weapon.Name, &weapon.Attack, &weapon.Defense)
+	err := wr.db.QueryRow("SELECT id, name, attack, defense, durability FROM weapon WHERE name LIKE $1", name).Scan(&weapon.ID, &weapon.Name, &weapon.Attack, &weapon.Defense, &weapon.Durability)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -58,7 +58,7 @@ func (wr *WeaponRepository) LoadWeaponByName(name string) (*entity.Weapon, error
 }
 
 func (wr *WeaponRepository) AddWeapon(weapon *entity.Weapon) (string, error) {
-	_, err := wr.db.Exec("INSERT INTO weapon (id, name, attack, defense) VALUES ($1, $2, $3, $4)", weapon.ID, weapon.Name, weapon.Attack, weapon.Defense)
+	_, err := wr.db.Exec("INSERT INTO weapon (id, name, attack, defense, durability) VALUES ($1, $2, $3, $4, $5)", weapon.ID, weapon.Name, weapon.Attack, weapon.Defense, weapon.Durability)
 	if err != nil {
 		return "", err
 	}
@@ -74,7 +74,7 @@ func (wr *WeaponRepository) DeleteWeaponById(id string) error {
 }
 
 func (wr *WeaponRepository) SaveWeapon(id string, weapon *entity.Weapon) error {
-	_, err := wr.db.Exec("UPDATE weapon SET name = $1, attack = $2, defense = $3 WHERE id = $4", weapon.Name, weapon.Attack, weapon.Defense, id)
+	_, err := wr.db.Exec("UPDATE weapon SET name = $1, attack = $2, defense = $3, durability = $4 WHERE id = $5", weapon.Name, weapon.Attack, weapon.Defense, weapon.Durability, id)
 	if err != nil {
 		return err
 	}

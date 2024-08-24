@@ -35,10 +35,11 @@ func TestPlayerHandler(t *testing.T) {
 	mux.HandleFunc("DELETE /player/{id}", playerHandler.DeletePlayer)
 	mux.HandleFunc("GET /player/{id}", playerHandler.LoadPlayer)
 	mux.HandleFunc("PUT /player/{id}", playerHandler.SavePlayer)
+	mux.HandleFunc("GET /player/{id}/repair-weapon", playerHandler.RepairPlayerWeapon)
 
 	// Test add player
 
-	jsonBody := []byte(`{"nickname": "P1", "life": 7, "weaponid": "1ccaac4a-3be5-442f-bba0-e7d78dfdc4a3"}`)
+	jsonBody := []byte(`{"nickname": "TestPlayer", "life": 100, "weaponid": "9b48bd04-d944-463b-be4e-a4eef73d7e15"}`)
 	bodyReader := bytes.NewReader(jsonBody)
 	request, err := http.NewRequest("POST", "/player", bodyReader)
 
@@ -115,7 +116,7 @@ func TestPlayerHandler(t *testing.T) {
 
 	// Test save player
 
-    jsonBody = []byte(`{"nickname": "P2", "life": 5, "weaponid": "1ccaac4a-3be5-442f-bba0-e7d78dfdc4a3"}`)
+    jsonBody = []byte(`{"nickname": "TestPlayer2", "life": 50, "weaponid": "8c3910f5-7248-40c7-b0c2-38446f328ce9"}`)
 	bodyReader = bytes.NewReader(jsonBody)
 	request, err = http.NewRequest(http.MethodPut, "/player/"+player.ID, bodyReader)
 
@@ -132,6 +133,28 @@ func TestPlayerHandler(t *testing.T) {
 	if status := responseRecorder.Code; status != http.StatusOK {
 		t.Errorf(
 			"playerHandler.SavePlayer returned wrong status code: got %v want %v",
+			status,
+			http.StatusOK,
+		)
+	}
+
+	// Test repair weapon
+
+	request, err = http.NewRequest("GET", "/player/"+player.ID+"/repair-weapon", nil)
+
+	if err != nil {
+		t.Fatalf(
+			"http.NewRequest returned an error: %v",
+			err,
+		)
+	}
+
+	responseRecorder = httptest.NewRecorder()
+	mux.ServeHTTP(responseRecorder, request)
+
+	if status := responseRecorder.Code; status != http.StatusOK {
+		t.Errorf(
+			"playerHandler.RepairPlayerWeapon returned wrong status code: got %v want %v",
 			status,
 			http.StatusOK,
 		)

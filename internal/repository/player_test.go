@@ -29,7 +29,7 @@ func TestPlayerRepository(t *testing.T) {
 				t.Fatalf("playerRepository is nil")
 			}
 
-			p := entity.NewPlayer("TestPlayer", 10, "1ccaac4a-3be5-442f-bba0-e7d78dfdc4a3")
+			p := entity.NewPlayer("TestPlayer", 10, "8c3910f5-7248-40c7-b0c2-38446f328ce9", 8)
 
 			_, e := playerRepository.AddPlayer(p)
 
@@ -65,6 +65,18 @@ func TestPlayerRepository(t *testing.T) {
 
 			if e != nil {
 				t.Errorf("playerRepository.DeletePlayerById returned an error; %s", e.Error())
+			}
+
+			e = playerRepository.SavePlayerWeaponDurability(p.ID, 10)
+
+			if e != nil {
+				t.Errorf("playerRepository.SavePlayerWeaponDurability returned an error; %s", e.Error())
+			}
+
+			_, e = playerRepository.LoadWeaponById(p.WeaponID)
+
+			if e != nil {
+				t.Errorf("playerRepository.LoadWeaponById returned an error; %s", e.Error())
 			}
 		})
 	}

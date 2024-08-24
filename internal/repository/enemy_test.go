@@ -29,7 +29,7 @@ func TestEnemyRepository(t *testing.T) {
 				t.Fatalf("enemyRepository is nil")
 			}
 
-			enemy := entity.NewEnemy("TestEnemy", "1ccaac4a-3be5-442f-bba0-e7d78dfdc4a3")
+			enemy := entity.NewEnemy("TestEnemy", "8c3910f5-7248-40c7-b0c2-38446f328ce9", 8)
 
 			_, err = enemyRepository.AddEnemy(enemy)
 
@@ -59,6 +59,30 @@ func TestEnemyRepository(t *testing.T) {
 
 			if err != nil {
 				t.Errorf("enemyRepository.SaveEnemy returned an error; %s", err.Error())
+			}
+
+			err = enemyRepository.SaveEnemyWeaponDurability(enemy.ID, 10)
+
+			if err != nil {
+				t.Errorf("enemyRepository.SaveEnemyWeaponDurability returned an error; %s", err.Error())
+			}
+
+			_, err = enemyRepository.LoadWeapons()
+
+			if err != nil {
+				t.Errorf("enemyRepository.LoadWeapons returned an error; %s", err.Error())
+			}
+
+			_, err = enemyRepository.LoadWeaponById(enemy.WeaponID)
+
+			if err != nil {
+				t.Errorf("enemyRepository.LoadWeaponById returned an error; %s", err.Error())
+			}
+
+			_, err = enemyRepository.LoadEnemyWeapon()
+
+			if err != nil {
+				t.Errorf("enemyRepository.LoadEnemyWeapon returned an error; %s", err.Error())
 			}
 
 			err = enemyRepository.DeleteEnemyById(enemy.ID)

@@ -61,6 +61,18 @@ func (bs *BattleService) AddBattle(enemyId, playerId string) (*entity.Battle, er
 		return nil, errors.New("internal server error")
 	}
 
+	// check if enemy weapon is broken
+	if enemy.WeaponDurability == 0 {
+		enemyWeapon.Attack = 1
+		enemyWeapon.Defense = 0.1
+	}
+
+	// check if player weapon is broken
+	if player.WeaponDurability == 0 {
+		playerWeapon.Attack = 1
+		playerWeapon.Defense = 0.1
+	}
+
 	// check if enemy won the battle
 	if battle.DiceThrown >= 1 && battle.DiceThrown <= 3 {
 		// subtract player life by enemy weapon attack minus player weapon defense
@@ -87,6 +99,18 @@ func (bs *BattleService) AddBattle(enemyId, playerId string) (*entity.Battle, er
 			fmt.Println(err)
 			return nil, errors.New("internal server error")
 		}
+	}
+
+	// decrease enemy and player weapon durability by 1
+	err = bs.BattleRepository.SaveEnemyWeaponDurability(enemy.ID, (enemy.WeaponDurability - 1))
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("internal server error")
+	}
+	err = bs.BattleRepository.SavePlayerWeaponDurability(player.ID, (player.WeaponDurability - 1))
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("internal server error")
 	}
 
 	if _, err := bs.BattleRepository.AddBattle(battle); err != nil {
